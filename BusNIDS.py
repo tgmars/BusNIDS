@@ -1,4 +1,10 @@
+#!/usr/bin/env python
+
+
 from scapy.all import *
+
+#Load the modbus extension module for Scapy as per the link at:
+#https://lost-and-found-narihiro.blogspot.com.au/2012/11/python-scapy-how-to-load-extension.html
 
 load_contrib('modbus')
 
