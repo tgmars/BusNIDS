@@ -8,7 +8,7 @@ from scapy.all import *
 
 load_contrib('modbus')
 
-MAX_PACKETS = 4
+MAX_PACKETS = 25
 PORT = '502'
 INTERFACE = "wlan0"
 
@@ -27,7 +27,7 @@ def customDisplay(packet):
 		if "error" in packet:
 			return 'src {} -> dst {} {} -> Likely malformed packet'.format(packet[packetCount][2].src, packet[packetCount][2].dst, packet.getlayer())
 		else:
-			return "valid modbus traffic"
+			return "Valid ModbusADURequest"
 	else: 
 		return "not modbus traffic" 
 
