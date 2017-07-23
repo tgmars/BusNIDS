@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-# v0.0.5
+#TODO: Update version number before push
+# v0.0.6
 
 from scapy.all import *
 
@@ -19,10 +20,12 @@ def customDisplay(packet):
 
 	#TODO: Add statistics for each valid type of packet
 
+	global packetCount
+
 	#Writing to Holding Registers Request - Not actually an ADURequest but a ModbusPDU10WriteMultipleRegistersRequest
 
 	if packet.haslayer(ModbusADURequest): #Change this so that there is a list of 'layers' and if incldued then execute.
-		global packetCount
+
 		packetCount += 1
 		print packetCount
 		#Used to generate a visualisation of the sniffed packet as a .pdf
@@ -36,7 +39,6 @@ def customDisplay(packet):
 			return "Valid ModbusADURequest"
 
 	if packet.haslayer(ModbusADUResponse): #Change this so that there is a list of 'layers' and if incldued then execute.
-		global packetCount
 		packetCount += 1
 		print packetCount
 		#Used to generate a visualisation of the sniffed packet as a .pdf
