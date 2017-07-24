@@ -14,8 +14,6 @@ MAX_PACKETS = 25
 PORT = '502'
 INTERFACE = "wlan0"
 
-
-
 packetCount = 0
 
 def customDisplay(packet):
@@ -28,8 +26,9 @@ def customDisplay(packet):
     #Checks if there are Modbus ADUs (application data unit) in the packets, they contain the MBAP header, Function Code and Function Data.
 	if packet.haslayer(ModbusADURequest): #Change this so that there is a list of 'layers' and if incldued then execute.
 
-		packetCount += 1
-		print packetCount
+
+		#packetCount += 1
+		#print packetCount
 		#Used to generate a visualisation of the sniffed packet as a .pdf
 		#packet[packetCount].pdfdump('packet.pdf')
 
@@ -39,11 +38,12 @@ def customDisplay(packet):
 			return 'src {} -> dst {} {} -> Likely malformed packet'.format(packet[packetCount][2].src, packet[packetCount][2].dst, packet.lastlayer())
 		else:
             #Return that there is a valid modbus message request and the details of the function code.
-			return "Valid ModbusADURequest. Type: "+str(packet.lastlayer())
+			return "Valid ModbusADURequest. Type: "+lastlayerString(packet)
 
 	if packet.haslayer(ModbusADUResponse): #Change this so that there is a list of 'layers' and if incldued then execute.
-		packetCount += 1
-		print packetCount
+
+		#packetCount += 1
+		#print packetCount
 		#Used to generate a visualisation of the sniffed packet as a .pdf
 		#packet[packetCount].pdfdump('packet.pdf')
 
@@ -53,10 +53,13 @@ def customDisplay(packet):
 			return 'src {} -> dst {} {} -> Likely malformed packet'.format(packet[packetCount][2].src, packet[packetCount][2].dst, packet.lastlayer())
 		else:
             # Return that there is a valid modbus response request and the details of the function code.
-			return "Valid ModbusADUResponse. Type: "+str(packet.lastlayer())
+			return "Valid ModbusADUResponse. Type: "+lastlayerString(packet)
 
 	else: 
 		return "Not Modbus Protocol - likely TCP handshaking"
+
+def lastlayerString(packet):
+	return packet.summary().split("/")[-1].strip('\'')
 
 ## Configure the sniff scapy argument for port 502 on the Rpi wireless interface and only sniff MAX_PACKETS  packets.
 
