@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #TODO: Update version number before push
-# v0.0.8
+# v0.0.10
 
 from scapy.all import *
 
@@ -10,7 +10,7 @@ from scapy.all import *
 
 load_contrib('modbus')
 
-MAX_PACKETS = 25
+MAX_PACKETS = 400
 PORT = '502'
 INTERFACE = "wlan0"
 
@@ -21,10 +21,11 @@ def customDisplay(packet):
 	#TODO: Add statistics for each valid type of packet
 
 	global packetCount
-
+    tcpcommunication = False
 
     #Checks if there are Modbus ADUs (application data unit) in the packets, they contain the MBAP header, Function Code and Function Data.
 	if packet.haslayer(ModbusADURequest): #Change this so that there is a list of 'layers' and if incldued then execute.
+
 
 
 		#packetCount += 1
@@ -55,8 +56,11 @@ def customDisplay(packet):
             # Return that there is a valid modbus response request and the details of the function code.
 			return "Valid ModbusADUResponse. Type: "+lastlayerString(packet)
 
-	else: 
-		return "Not Modbus Protocol - likely TCP handshaking"
+	if tcpcommunication = True:
+        return ""
+    else:
+        tcpcommunication = True
+        return "TCP Handshaking..."
 
 def lastlayerString(packet):
 	return packet.summary().split("/")[-1].strip('\'')
