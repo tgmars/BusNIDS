@@ -57,7 +57,7 @@ def customDisplay(packet):
             # Return that there is a valid modbus response request and the details of the function code.
 			return "Valid ModbusADUResponse. Type: "+lastlayerString(packet)
 
-	if tcpcommunication = True:
+	if tcpcommunication:
         return ""
     else:
         tcpcommunication = True
