@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #TODO: Update version number before push
-# v0.0.7
+# v0.0.8
 
 from scapy.all import *
 
@@ -39,7 +39,7 @@ def customDisplay(packet):
 			return 'src {} -> dst {} {} -> Likely malformed packet'.format(packet[packetCount][2].src, packet[packetCount][2].dst, packet.lastlayer())
 		else:
             #Return that there is a valid modbus message request and the details of the function code.
-			return "Valid ModbusADURequest. Type: "+packet.lastlayer()
+			return "Valid ModbusADURequest. Type: "+str(packet.lastlayer())
 
 	if packet.haslayer(ModbusADUResponse): #Change this so that there is a list of 'layers' and if incldued then execute.
 		packetCount += 1
@@ -53,7 +53,7 @@ def customDisplay(packet):
 			return 'src {} -> dst {} {} -> Likely malformed packet'.format(packet[packetCount][2].src, packet[packetCount][2].dst, packet.lastlayer())
 		else:
             # Return that there is a valid modbus response request and the details of the function code.
-			return "Valid ModbusADUResponse. Type: "+packet.lastlayer()
+			return "Valid ModbusADUResponse. Type: "+str(packet.lastlayer())
 
 	else: 
 		return "Not Modbus Protocol - likely TCP handshaking"
