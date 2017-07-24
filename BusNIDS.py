@@ -34,6 +34,7 @@ def customDisplay(packet):
 
 		#Uncomment to present more details of the sniffed packet to the console.
 		#return packet[packetCount].show()
+		tcpcommunication=False
 		if "error" in packet:
 			return 'src {} -> dst {} {} -> Likely malformed packet'.format(packet[packetCount][2].src, packet[packetCount][2].dst, packet.lastlayer())
 		else:
@@ -49,6 +50,7 @@ def customDisplay(packet):
 
 		#Uncomment to present more details of the sniffed packet to the console.
 		#return packet[packetCount].show()
+		tcpcommunication=False
 		if "error" in packet:
 			return 'src {} -> dst {} {} -> Likely malformed packet'.format(packet[packetCount][2].src, packet[packetCount][2].dst, packet.lastlayer())
 		else:
@@ -67,6 +69,6 @@ def lastlayerString(packet):
 
 ## Configure the sniff scapy argument for port 502 on the Rpi wireless interface and only sniff MAX_PACKETS  packets.
 
-pkt=sniff(filter="port "+PORT, iface=INTERFACE, count = MAX_PACKETS,  prn=customDisplay)
+pkt=sniff(filter="port "+PORT, iface=INTERFACE,  prn=customDisplay)
 
 
