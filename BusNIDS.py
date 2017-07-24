@@ -15,13 +15,14 @@ PORT = '502'
 INTERFACE = "wlan0"
 
 packetCount = 0
+tcpcommunication = False
 
 def customDisplay(packet):
 
 	#TODO: Add statistics for each valid type of packet
 
 	global packetCount
-    tcpcommunication = False
+	global tcpcommunication
 
     #Checks if there are Modbus ADUs (application data unit) in the packets, they contain the MBAP header, Function Code and Function Data.
 	if packet.haslayer(ModbusADURequest): #Change this so that there is a list of 'layers' and if incldued then execute.
