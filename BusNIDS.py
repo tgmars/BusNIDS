@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #TODO: Update version number before push
-# v0.0.11
+# v0.0.12
 
 from scapy.all import *
 
@@ -24,7 +24,7 @@ def customDisplay(packet):
 	global packetCount
 	global tcpcommunication
 
-    #Checks if there are Modbus ADUs (application data unit) in the packets, they contain the MBAP header, Function Code and Function Data.
+	#Checks if there are Modbus ADUs (application data unit) in the packets, they contain the MBAP header, Function Code and Function Data.
 	if packet.haslayer(ModbusADURequest): #Change this so that there is a list of 'layers' and if incldued then execute.
 
 		#packetCount += 1
@@ -37,7 +37,7 @@ def customDisplay(packet):
 		if "error" in packet:
 			return 'src {} -> dst {} {} -> Likely malformed packet'.format(packet[packetCount][2].src, packet[packetCount][2].dst, packet.lastlayer())
 		else:
-            #Return that there is a valid modbus message request and the details of the function code.
+			#Return that there is a valid modbus message request and the details of the function code.
 			return "Valid ModbusADURequest. Type: "+lastlayerString(packet)
 
 	if packet.haslayer(ModbusADUResponse): #Change this so that there is a list of 'layers' and if incldued then execute.
@@ -52,15 +52,15 @@ def customDisplay(packet):
 		if "error" in packet:
 			return 'src {} -> dst {} {} -> Likely malformed packet'.format(packet[packetCount][2].src, packet[packetCount][2].dst, packet.lastlayer())
 		else:
-            return "Valid ModbusADUResponse. Type: "+lastlayerString(packet)
-            #Return that there is a valid modbus response request and the details of the function code.
+			return "Valid ModbusADUResponse. Type: "+lastlayerString(packet)
+			#Return that there is a valid modbus response request and the details of the function code.
 
-    if tcpcommunication:
-        return ''
+	if tcpcommunication:
+		return ''
 
-    else:
-        tcpcommunication = True
-        return "TCP Handshaking..."
+	else:
+		tcpcommunication = True
+		return "TCP Handshaking..."
 
 def lastlayerString(packet):
 	return packet.summary().split("/")[-1].strip('\'')
