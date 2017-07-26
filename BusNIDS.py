@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #TODO: Update version number before push
-# v0.0.16
+# v0.0.17
 
 from scapy.all import *
 
@@ -27,7 +27,7 @@ def customDisplay(packet):
 	#Checks if there are Modbus ADUs (application data unit) in the packets, they contain the MBAP header, Function Code and Function Data.
 	if packet.haslayer(ModbusADURequest): #Change this so that there is a list of 'layers' and if incldued then execute.
 
-		packetCount += 1
+		#packetCount += 1
 		#print packetCount
 		#Used to generate a visualisation of the sniffed packet as a .pdf
 		#packet[packetCount].pdfdump('packet.pdf')
@@ -36,14 +36,14 @@ def customDisplay(packet):
 		#return packet[packetCount].show()
 		tcpcommunication=False
 		if str(packet).find('Error'):
-			return 'src {} -> dst {} {} -> Likely malformed packet'.format(packet.src, packet.dst, packet.lastlayer())
+			return 'Malformed Packet: src {} -> dst {} {}'.format(packet.src[IP], packet.dst[IP], lastlayerString(packet))
 		else:
 			#Return that there is a valid modbus message request and the details of the function code.
 			return "Valid ModbusADURequest. Type: "+lastlayerString(packet)
 
 	if packet.haslayer(ModbusADUResponse): #Change this so that there is a list of 'layers' and if incldued then execute.
 
-		packetCount += 1
+		#packetCount += 1
 		#print packetCount
 		#Used to generate a visualisation of the sniffed packet as a .pdf
 		#packet[packetCount].pdfdump('packet.pdf')
@@ -52,7 +52,7 @@ def customDisplay(packet):
 		#return packet[packetCount].show()
 		tcpcommunication=False
         if str(packet).find('Error'):
-		    return 'src {} -> dst {} {} -> Likely malformed packet'.format(packet.src, packet.dst, packet.lastlayer())
+		    return 'Malformed Packet: src {} -> dst {} {}'.format(packet.src[IP], packet.dst[IP], lastlayerString(packet))
         else:
 			return "Valid ModbusADUResponse. Type: "+lastlayerString(packet)
 			#Return that there is a valid modbus response request and the details of the function code.
