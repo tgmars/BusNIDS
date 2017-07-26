@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #TODO: Update version number before push
-# v0.0.17
+# v0.0.18
 
 from scapy.all import *
 
@@ -36,7 +36,7 @@ def customDisplay(packet):
 		#return packet[packetCount].show()
 		tcpcommunication=False
 		if str(packet).find('Error'):
-			return 'Malformed Packet: src {} -> dst {} {}'.format(packet.src[IP], packet.dst[IP], lastlayerString(packet))
+			return 'Malformed Packet: src {} -> dst {} {}'.format(packet[IP].src, packet[IP].dst, lastlayerString(packet))
 		else:
 			#Return that there is a valid modbus message request and the details of the function code.
 			return "Valid ModbusADURequest. Type: "+lastlayerString(packet)
@@ -52,7 +52,7 @@ def customDisplay(packet):
 		#return packet[packetCount].show()
 		tcpcommunication=False
         if str(packet).find('Error'):
-		    return 'Malformed Packet: src {} -> dst {} {}'.format(packet.src[IP], packet.dst[IP], lastlayerString(packet))
+		    return 'Malformed Packet: src {} -> dst {} {}'.format(packet[IP].src, packet[IP].dst, lastlayerString(packet))
         else:
 			return "Valid ModbusADUResponse. Type: "+lastlayerString(packet)
 			#Return that there is a valid modbus response request and the details of the function code.
