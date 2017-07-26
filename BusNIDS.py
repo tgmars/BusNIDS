@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #TODO: Update version number before push
-# v0.0.14
+# v0.0.15
 
 from scapy.all import *
 
@@ -35,7 +35,7 @@ def customDisplay(packet):
 		#Uncomment to present more details of the sniffed packet to the console.
 		#return packet[packetCount].show()
 		tcpcommunication=False
-		if "Error" in packet:
+		if str(packet).find('Error'):
 			return 'src {} -> dst {} {} -> Likely malformed packet'.format(packet[packetCount][2].src, packet[packetCount][2].dst, packet.lastlayer())
 		else:
 			#Return that there is a valid modbus message request and the details of the function code.
