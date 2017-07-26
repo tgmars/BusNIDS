@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #TODO: Update version number before push
-# v0.0.13
+# v0.0.14
 
 from scapy.all import *
 
@@ -35,7 +35,7 @@ def customDisplay(packet):
 		#Uncomment to present more details of the sniffed packet to the console.
 		#return packet[packetCount].show()
 		tcpcommunication=False
-		if "error" in packet:
+		if "Error" in packet:
 			return 'src {} -> dst {} {} -> Likely malformed packet'.format(packet[packetCount][2].src, packet[packetCount][2].dst, packet.lastlayer())
 		else:
 			#Return that there is a valid modbus message request and the details of the function code.
@@ -65,7 +65,13 @@ def customDisplay(packet):
 		return "TCP Handshaking..."
 
 def lastlayerString(packet):
+	"""Function to return the top layer of a packet as a string.
+
+	Returns:
+	    The top layer of a scapy packet as a string.
+	"""
 	return packet.summary().split("/")[-1].strip('\'')
+
 
 ## Configure the sniff scapy argument for port 502 on the Rpi wireless interface and only sniff MAX_PACKETS  packets.
 
