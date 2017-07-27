@@ -36,11 +36,11 @@ def customDisplay(packet):
 
         # Uncomment to present more details of the sniffed packet to the console.
         # return packet[packetCount].show()
-        print str('Error' in lastlayerString(packet))
+
         tcpcommunication = False
         if 'Error' in lastlayerString(packet):
             f.write("\nModbus packet: "+str(packetCount)+"\n"+packet.show2(dump=True))
-            return 'Malformed Packet: src {} -> dst {} via protocol {}'.format(packet[IP].src, packet[IP].dst,lastlayerString(packet))
+            return 'Malformed Packet: src {} -> dst {} via PDU {}'.format(packet[IP].src, packet[IP].dst,lastlayerString(packet))
         else:
             # Return that there is a valid modbus message request and the details of the function code.
             return "Valid ModbusADU packet. Type: " + lastlayerString(packet)
