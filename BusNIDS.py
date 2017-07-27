@@ -27,10 +27,9 @@ def customDisplay(packet):
     global tcpcommunication
 
     # Checks if there are Modbus ADUs (application data unit) in the packets, they contain the MBAP header, Function Code and Function Data.
-    if packet.haslayer(
-            ModbusADURequest):  # Change this so that there is a list of 'layers' and if incldued then execute.
+    if packet.haslayer(ModbusADURequest) or packet.haslayer(ModbusADUResponse):
 
-        # packetCount += 1
+        packetCount += 1
         # print packetCount
         # Used to generate a visualisation of the sniffed packet as a .pdf
         # packet[packetCount].pdfdump('packet.pdf')
@@ -39,29 +38,12 @@ def customDisplay(packet):
         # return packet[packetCount].show()
         tcpcommunication = False
         if str(packet).find('Error'):
-            f.write(packet.show2(dump=True))
+            f.write((str)packetCount+packet.show2(dump=True))
             return 'Malformed Packet: src {} -> dst {} {}'.format(packet[IP].src, packet[IP].dst,
                                                                   lastlayerString(packet))
         else:
             # Return that there is a valid modbus message request and the details of the function code.
-            return "Valid ModbusADURequest. Type: " + lastlayerString(packet)
-
-    if packet.haslayer(
-            ModbusADUResponse):  # Change this so that there is a list of 'layers' and if incldued then execute.
-
-        # packetCount += 1
-        # print packetCount
-        # Used to generate a visualisation of the sniffed packet as a .pdf
-        # packet[packetCount].pdfdump('packet.pdf')
-
-        # Uncomment to present more details of the sniffed packet to the console.
-        # return packet[packetCount].show()
-        tcpcommunication = False
-    if str(packet).find('Error'):
-        return 'Malformed Packet: src {} -> dst {} {}'.format(packet[IP].src, packet[IP].dst, lastlayerString(packet))
-    else:
-        return "Valid ModbusADUResponse. Type: " + lastlayerString(packet)
-    # Return that there is a valid modbus response request and the details of the function code.
+            return "Valid ModbusADU packet. Type: " + lastlayerString(packet)
 
     # noinspection PyUnreachableCode
     if tcpcommunication:
@@ -78,7 +60,7 @@ def lastlayerString(packet):
 	Returns:
 	    The top layer of a scapy packet as a string.
 	"""
-    return packet.summary().split("/")[-1].strip('\'')
+    return packet.summary()#.split("/")[-1].strip('\'')
 
 
 ## Configure the sniff scapy argument for port 502 on the Rpi wireless interface and only sniff MAX_PACKETS  packets.
