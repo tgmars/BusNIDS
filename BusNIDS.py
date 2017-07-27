@@ -36,6 +36,8 @@ def customDisplay(packet):
 
         # Uncomment to present more details of the sniffed packet to the console.
         # return packet[packetCount].show()
+        print(str(packet))
+        print(str(str(packet).find('Error')))
         tcpcommunication = False
         if str(packet).find('Error'):
             f.write("\nModbus packet: "+str(packetCount)+"\n"+packet.show2(dump=True))
