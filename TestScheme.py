@@ -22,4 +22,4 @@ stream = StreamSocket(sock)
 errorpacket=ModbusADURequest()/ModbusPDU10WriteMultipleRegistersRequest(startingAddr=1,outputsValue=[13],quantityRegisters=2L)
 
 #Send the desired packets
-response=testStream.sr(errRegistersPacket)
+response=stream.sr(errorpacket)
