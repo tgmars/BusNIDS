@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # TODO: Update version number before push
-# v0.0.19
+# v0.0.20
 
 from scapy.all import *
 
@@ -38,7 +38,7 @@ def customDisplay(packet):
         # return packet[packetCount].show()
         tcpcommunication = False
         if str(packet).find('Error'):
-            f.write((str)packetCount+packet.show2(dump=True))
+            f.write("\nModbus packet: "+str(packetCount)+"\n"+packet.show2(dump=True))
             return 'Malformed Packet: src {} -> dst {} {}'.format(packet[IP].src, packet[IP].dst,
                                                                   lastlayerString(packet))
         else:
