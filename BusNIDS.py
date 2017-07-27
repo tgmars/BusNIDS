@@ -36,9 +36,9 @@ def customDisplay(packet):
 
         # Uncomment to present more details of the sniffed packet to the console.
         # return packet[packetCount].show()
-        print str('Error' or 'Exception' in packet.show(dump=True))
+        print str('Error' in lastlayerString(packet))
         tcpcommunication = False
-        if 'Error' or 'Exception' in packet.show(dump=True):
+        if 'Error' in lastlayerString(packet):
             f.write("\nModbus packet: "+str(packetCount)+"\n"+packet.show2(dump=True))
             return 'Malformed Packet: src {} -> dst {} {}'.format(packet[IP].src, packet[IP].dst,lastlayerString(packet))
         else:
