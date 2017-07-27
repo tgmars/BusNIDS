@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # TODO: Update version number before push
-# v0.0.20
+# v0.0.21
 
 from scapy.all import *
 
@@ -40,7 +40,7 @@ def customDisplay(packet):
         tcpcommunication = False
         if 'Error' in lastlayerString(packet):
             f.write("\nModbus packet: "+str(packetCount)+"\n"+packet.show2(dump=True))
-            return 'Malformed Packet: src {} -> dst {} {}'.format(packet[IP].src, packet[IP].dst,lastlayerString(packet))
+            return 'Malformed Packet: src {} -> dst {} via protocol {}'.format(packet[IP].src, packet[IP].dst,lastlayerString(packet))
         else:
             # Return that there is a valid modbus message request and the details of the function code.
             return "Valid ModbusADU packet. Type: " + lastlayerString(packet)
@@ -60,7 +60,7 @@ def lastlayerString(packet):
 	Returns:
 	    The top layer of a scapy packet as a string.
 	"""
-    return packet.summary()#.split("/")[-1].strip('\'')
+    return packet.summary().split("/")[-1].strip('\'')
 
 
 ## Configure the sniff scapy argument for port 502 on the Rpi wireless interface and only sniff MAX_PACKETS  packets.
