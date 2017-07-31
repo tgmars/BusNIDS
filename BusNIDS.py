@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-#TODO: Update version number before push
-# v0.0.13
+# TODO: Update version number before push
+# v0.0.21
 
 from scapy.all import *
 
-#Load the modbus extension module for Scapy as per the link at:
-#https://lost-and-found-narihiro.blogspot.com.au/2012/11/python-scapy-how-to-load-extension.html
+# Load the modbus extension module for Scapy as per the link at:
+# https://lost-and-found-narihiro.blogspot.com.au/2012/11/python-scapy-how-to-load-extension.html
 
 load_contrib('modbus')
 
@@ -17,58 +17,52 @@ INTERFACE = "wlan0"
 packetCount = 0
 tcpcommunication = False
 
+f = open('errorpackets.txt', 'a+')
+
+
 def customDisplay(packet):
+    # TODO: Add statistics for each valid type of packet
 
-	#TODO: Add statistics for each valid type of packet
+    global packetCount
+    global tcpcommunication
 
-	global packetCount
-	global tcpcommunication
+    # Checks if there are Modbus ADUs (application data unit) in the packets, they contain the MBAP header, Function Code and Function Data.
+    if packet.haslayer(ModbusADURequest) or packet.haslayer(ModbusADUResponse):
 
-	#Checks if there are Modbus ADUs (application data unit) in the packets, they contain the MBAP header, Function Code and Function Data.
-	if packet.haslayer(ModbusADURequest): #Change this so that there is a list of 'layers' and if incldued then execute.
+        packetCount += 1
+        # print packetCount
+        # Used to generate a visualisation of the sniffed packet as a .pdf
+        # packet[packetCount].pdfdump('packet.pdf')
 
-		#packetCount += 1
-		#print packetCount
-		#Used to generate a visualisation of the sniffed packet as a .pdf
-		#packet[packetCount].pdfdump('packet.pdf')
+        # Uncomment to present more details of the sniffed packet to the console.
+        # return packet[packetCount].show()
 
-		#Uncomment to present more details of the sniffed packet to the console.
-		#return packet[packetCount].show()
-		tcpcommunication=False
-		if "error" in packet:
-			return 'src {} -> dst {} {} -> Likely malformed packet'.format(packet[packetCount][2].src, packet[packetCount][2].dst, packet.lastlayer())
-		else:
-			#Return that there is a valid modbus message request and the details of the function code.
-			return "Valid ModbusADURequest. Type: "+lastlayerString(packet)
+        tcpcommunication = False
+        if 'Error' in lastlayerString(packet):
+            f.write("\nModbus packet: "+str(packetCount)+"\n"+packet.show2(dump=True))
+            return 'Malformed Packet: src {} -> dst {} via PDU {}'.format(packet[IP].src, packet[IP].dst,lastlayerString(packet))
+        else:
+            # Return that there is a valid modbus message request and the details of the function code.
+            return "Valid ModbusADU packet. Type: " + lastlayerString(packet)
 
-	if packet.haslayer(ModbusADUResponse): #Change this so that there is a list of 'layers' and if incldued then execute.
+    # noinspection PyUnreachableCode
+    if tcpcommunication:
+        return ''
 
-		#packetCount += 1
-		#print packetCount
-		#Used to generate a visualisation of the sniffed packet as a .pdf
-		#packet[packetCount].pdfdump('packet.pdf')
+    else:
+        tcpcommunication = True
+        return "TCP Handshaking..."
 
-		#Uncomment to present more details of the sniffed packet to the console.
-		#return packet[packetCount].show()
-		tcpcommunication=False
-		if "error" in packet:
-			return 'src {} -> dst {} {} -> Likely malformed packet'.format(packet[packetCount][2].src, packet[packetCount][2].dst, packet.lastlayer())
-		else:
-			return "Valid ModbusADUResponse. Type: "+lastlayerString(packet)
-			#Return that there is a valid modbus response request and the details of the function code.
-
-	if tcpcommunication:
-		return ''
-
-	else:
-		tcpcommunication = True
-		return "TCP Handshaking..."
 
 def lastlayerString(packet):
-	return packet.summary().split("/")[-1].strip('\'')
+    """Function to return the top layer of a packet as a string.
+
+	Returns:
+	    The top layer of a scapy packet as a string.
+	"""
+    return packet.summary().split("/")[-1].strip('\'')
+
 
 ## Configure the sniff scapy argument for port 502 on the Rpi wireless interface and only sniff MAX_PACKETS  packets.
-
-pkt=sniff(filter="port "+PORT, iface=INTERFACE,  prn=customDisplay)
-
-
+pkt = sniff(filter="port " + PORT, iface=INTERFACE, prn=customDisplay)
+f.close()
