@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # TODO: Update version number before push
-# v0.0.30
+# v0.0.31
 
 from scapy.all import *
 
@@ -19,20 +19,20 @@ packet_risk = [] #Empty list which will contain risk level of each packet.
 cache=[] #To be utilised
 #To write to PCAP file, use wrpcap("filename.pcap",var_to_write)
 
-low_risk=set(ModbusPDU01ReadCoilsRequest,ModbusPDU01ReadCoilsResponse,ModbusPDU02ReadDiscreteInputsRequest,ModbusPDU02ReadDiscreteInputsResponse,
+low_risk=frozenset(ModbusPDU01ReadCoilsRequest,ModbusPDU01ReadCoilsResponse,ModbusPDU02ReadDiscreteInputsRequest,ModbusPDU02ReadDiscreteInputsResponse,
              ModbusPDU03ReadHoldingRegistersRequest,ModbusPDU03ReadHoldingRegistersResponse,ModbusPDU04ReadInputRegistersRequest,ModbusPDU04ReadInputRegistersResponse,
              ModbusPDU07ReadExceptionStatusRequest,ModbusPDU07ReadExceptionStatusResponse,ModbusPDU11ReportSlaveIdRequest,ModbusPDU11ReportSlaveIdResponse,
              ModbusPDU14ReadFileRecordRequest,ModbusPDU14ReadFileRecordResponse,ModbusPDU18ReadFIFOQueueRequest,ModbusPDU18ReadFIFOQueueResponse,
              ModbusPDU2B0EReadDeviceIdentificationRequest,ModbusPDU2B0EReadDeviceIdentificationResponse)
 
-med_risk=set(ModbusPDU15WriteFileRecordRequest,ModbusPDU15WriteFileRecordResponse,ModbusPDU16MaskWriteRegisterRequest,ModbusPDU16MaskWriteRegisterResponse,
+med_risk=frozenset(ModbusPDU15WriteFileRecordRequest,ModbusPDU15WriteFileRecordResponse,ModbusPDU16MaskWriteRegisterRequest,ModbusPDU16MaskWriteRegisterResponse,
              ModbusReadFileSubRequest,ModbusReadFileSubResponse,ModbusWriteFileSubRequest,ModbusWriteFileSubResponse)
 
-high_risk=set(ModbusPDU05WriteSingleCoilRequest,ModbusPDU05WriteSingleCoilResponse,ModbusPDU06WriteSingleRegisterRequest,ModbusPDU06WriteSingleRegisterResponse,
+high_risk=frozenset(ModbusPDU05WriteSingleCoilRequest,ModbusPDU05WriteSingleCoilResponse,ModbusPDU06WriteSingleRegisterRequest,ModbusPDU06WriteSingleRegisterResponse,
               ModbusPDU0FWriteMultipleCoilsRequest,ModbusPDU0FWriteMultipleCoilsResponse,ModbusPDU10WriteMultipleRegistersRequest,ModbusPDU10WriteMultipleRegistersResponse,
               ModbusPDU17ReadWriteMultipleRegistersRequest,ModbusPDU17ReadWriteMultipleRegistersResponse)
 
-error_risk=set(ModbusPDU01ReadCoilsError,ModbusPDU02ReadDiscreteInputsError,ModbusPDU03ReadHoldingRegistersError,ModbusPDU04ReadInputRegistersError,ModbusPDU05WriteSingleCoilError,
+error_risk=frozenset(ModbusPDU01ReadCoilsError,ModbusPDU02ReadDiscreteInputsError,ModbusPDU03ReadHoldingRegistersError,ModbusPDU04ReadInputRegistersError,ModbusPDU05WriteSingleCoilError,
                ModbusPDU06WriteSingleRegisterError,ModbusPDU07ReadExceptionStatusError,ModbusPDU0FWriteMultipleCoilsError,ModbusPDU10WriteMultipleRegistersError,
                ModbusPDU11ReportSlaveIdError,ModbusPDU14ReadFileRecordError,ModbusPDU15WriteFileRecordError,ModbusPDU16MaskWriteRegisterError,
                ModbusPDU17ReadWriteMultipleRegistersError,ModbusPDU18ReadFIFOQueueError,ModbusPDU2B0EReadDeviceIdentificationError)
