@@ -60,6 +60,8 @@ def custom_display(packet):
 
         determine_packet_risk(packet) # Assigns a risk value to the packet currently being processed in the corresponding packet_risk list.
 
+        print str(med_risk)
+
         if 'Error' in last_layer_string(packet):
             f.write("\nBad Modbus packet : "+str(packet_count)+" Risk Level: "+str(packet_risk[packet_count])+"\n"+packet.show2(dump=True))
             return 'Error Packet reported src {} -> dst {} via PDU {}'.format(packet[IP].src, packet[IP].dst,last_layer_string(packet))
@@ -88,15 +90,19 @@ def last_layer_string(packet):
 def determine_packet_risk(packet):
     if low_risk in packet:
         packet_risk[packet_count]=0.25
+        print "Low PR"
 
     if med_risk in packet:
         packet_risk[packet_count]=0.5
+        print "Med PR"
 
     if high_risk in packet:
         packet_risk[packet_count]=0.75
+        print "High PR"
 
     if error_risk in packet:
         packet_risk[packet_count]=0.95
+        print "Error PR"
 
 
 ## Configure the sniff scapy argument for port 502 on the Rpi wireless interface and only sniff MAX_PACKETS  packets.
