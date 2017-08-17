@@ -19,23 +19,23 @@ packet_risk = [] #Empty list which will contain risk level of each packet.
 cache=[] #To be utilised
 #To write to PCAP file, use wrpcap("filename.pcap",var_to_write)
 
-low_risk=frozenset(ModbusPDU01ReadCoilsRequest,ModbusPDU01ReadCoilsResponse,ModbusPDU02ReadDiscreteInputsRequest,ModbusPDU02ReadDiscreteInputsResponse,
+low_risk={ModbusPDU01ReadCoilsRequest,ModbusPDU01ReadCoilsResponse,ModbusPDU02ReadDiscreteInputsRequest,ModbusPDU02ReadDiscreteInputsResponse,
              ModbusPDU03ReadHoldingRegistersRequest,ModbusPDU03ReadHoldingRegistersResponse,ModbusPDU04ReadInputRegistersRequest,ModbusPDU04ReadInputRegistersResponse,
              ModbusPDU07ReadExceptionStatusRequest,ModbusPDU07ReadExceptionStatusResponse,ModbusPDU11ReportSlaveIdRequest,ModbusPDU11ReportSlaveIdResponse,
              ModbusPDU14ReadFileRecordRequest,ModbusPDU14ReadFileRecordResponse,ModbusPDU18ReadFIFOQueueRequest,ModbusPDU18ReadFIFOQueueResponse,
-             ModbusPDU2B0EReadDeviceIdentificationRequest,ModbusPDU2B0EReadDeviceIdentificationResponse)
+             ModbusPDU2B0EReadDeviceIdentificationRequest,ModbusPDU2B0EReadDeviceIdentificationResponse}
 
-med_risk=frozenset(ModbusPDU15WriteFileRecordRequest,ModbusPDU15WriteFileRecordResponse,ModbusPDU16MaskWriteRegisterRequest,ModbusPDU16MaskWriteRegisterResponse,
-             ModbusReadFileSubRequest,ModbusReadFileSubResponse,ModbusWriteFileSubRequest,ModbusWriteFileSubResponse)
+med_risk={ModbusPDU15WriteFileRecordRequest,ModbusPDU15WriteFileRecordResponse,ModbusPDU16MaskWriteRegisterRequest,ModbusPDU16MaskWriteRegisterResponse,
+             ModbusReadFileSubRequest,ModbusReadFileSubResponse,ModbusWriteFileSubRequest,ModbusWriteFileSubResponse}
 
-high_risk=frozenset(ModbusPDU05WriteSingleCoilRequest,ModbusPDU05WriteSingleCoilResponse,ModbusPDU06WriteSingleRegisterRequest,ModbusPDU06WriteSingleRegisterResponse,
+high_risk={ModbusPDU05WriteSingleCoilRequest,ModbusPDU05WriteSingleCoilResponse,ModbusPDU06WriteSingleRegisterRequest,ModbusPDU06WriteSingleRegisterResponse,
               ModbusPDU0FWriteMultipleCoilsRequest,ModbusPDU0FWriteMultipleCoilsResponse,ModbusPDU10WriteMultipleRegistersRequest,ModbusPDU10WriteMultipleRegistersResponse,
-              ModbusPDU17ReadWriteMultipleRegistersRequest,ModbusPDU17ReadWriteMultipleRegistersResponse)
+              ModbusPDU17ReadWriteMultipleRegistersRequest,ModbusPDU17ReadWriteMultipleRegistersResponse}
 
-error_risk=frozenset(ModbusPDU01ReadCoilsError,ModbusPDU02ReadDiscreteInputsError,ModbusPDU03ReadHoldingRegistersError,ModbusPDU04ReadInputRegistersError,ModbusPDU05WriteSingleCoilError,
+error_risk={ModbusPDU01ReadCoilsError,ModbusPDU02ReadDiscreteInputsError,ModbusPDU03ReadHoldingRegistersError,ModbusPDU04ReadInputRegistersError,ModbusPDU05WriteSingleCoilError,
                ModbusPDU06WriteSingleRegisterError,ModbusPDU07ReadExceptionStatusError,ModbusPDU0FWriteMultipleCoilsError,ModbusPDU10WriteMultipleRegistersError,
                ModbusPDU11ReportSlaveIdError,ModbusPDU14ReadFileRecordError,ModbusPDU15WriteFileRecordError,ModbusPDU16MaskWriteRegisterError,
-               ModbusPDU17ReadWriteMultipleRegistersError,ModbusPDU18ReadFIFOQueueError,ModbusPDU2B0EReadDeviceIdentificationError)
+               ModbusPDU17ReadWriteMultipleRegistersError,ModbusPDU18ReadFIFOQueueError,ModbusPDU2B0EReadDeviceIdentificationError}
 
 tcpcommunication = False
 
