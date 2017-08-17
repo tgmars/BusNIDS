@@ -60,7 +60,8 @@ def custom_display(packet):
 
         determine_packet_risk(packet) # Assigns a risk value to the packet currently being processed in the corresponding packet_risk list.
 
-        print str(med_risk)
+        print str(error_risk)
+        print str(packet.lastlayer())
 
         if 'Error' in last_layer_string(packet):
             f.write("\nBad Modbus packet : "+str(packet_count)+" Risk Level: "+str(packet_risk[packet_count])+"\n"+packet.show2(dump=True))
@@ -88,6 +89,14 @@ def last_layer_string(packet):
     return packet.summary().split("/")[-1].strip('\'')
 
 def determine_packet_risk(packet):
+    """Assigns a risk level to a packet depending on the type of ModbusPDU packet
+    The risk level is assigned in the packet_risk list index corresponding to the
+    packets location in the packet pkt array.
+
+    Returns:
+        Null
+    """
+
     if low_risk in packet:
         packet_risk[packet_count]=0.25
         print "Low PR"
