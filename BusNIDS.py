@@ -19,23 +19,12 @@ packet_risk = [] #Empty list which will contain risk level of each packet.
 cache=[] #To be utilised
 #To write to PCAP file, use wrpcap("filename.pcap",var_to_write)
 
-low_risk={ModbusPDU01ReadCoilsRequest,ModbusPDU01ReadCoilsResponse,ModbusPDU02ReadDiscreteInputsRequest,ModbusPDU02ReadDiscreteInputsResponse,
-             ModbusPDU03ReadHoldingRegistersRequest,ModbusPDU03ReadHoldingRegistersResponse,ModbusPDU04ReadInputRegistersRequest,ModbusPDU04ReadInputRegistersResponse,
-             ModbusPDU07ReadExceptionStatusRequest,ModbusPDU07ReadExceptionStatusResponse,ModbusPDU11ReportSlaveIdRequest,ModbusPDU11ReportSlaveIdResponse,
-             ModbusPDU14ReadFileRecordRequest,ModbusPDU14ReadFileRecordResponse,ModbusPDU18ReadFIFOQueueRequest,ModbusPDU18ReadFIFOQueueResponse,
-             ModbusPDU2B0EReadDeviceIdentificationRequest,ModbusPDU2B0EReadDeviceIdentificationResponse}
-
 med_risk={ModbusPDU15WriteFileRecordRequest,ModbusPDU15WriteFileRecordResponse,ModbusPDU16MaskWriteRegisterRequest,ModbusPDU16MaskWriteRegisterResponse,
              ModbusReadFileSubRequest,ModbusReadFileSubResponse,ModbusWriteFileSubRequest,ModbusWriteFileSubResponse}
 
 high_risk={ModbusPDU05WriteSingleCoilRequest,ModbusPDU05WriteSingleCoilResponse,ModbusPDU06WriteSingleRegisterRequest,ModbusPDU06WriteSingleRegisterResponse,
               ModbusPDU0FWriteMultipleCoilsRequest,ModbusPDU0FWriteMultipleCoilsResponse,ModbusPDU10WriteMultipleRegistersRequest,ModbusPDU10WriteMultipleRegistersResponse,
               ModbusPDU17ReadWriteMultipleRegistersRequest,ModbusPDU17ReadWriteMultipleRegistersResponse}
-
-error_risk={ModbusPDU01ReadCoilsError,ModbusPDU02ReadDiscreteInputsError,ModbusPDU03ReadHoldingRegistersError,ModbusPDU04ReadInputRegistersError,ModbusPDU05WriteSingleCoilError,
-               ModbusPDU06WriteSingleRegisterError,ModbusPDU07ReadExceptionStatusError,ModbusPDU0FWriteMultipleCoilsError,ModbusPDU10WriteMultipleRegistersError,
-               ModbusPDU11ReportSlaveIdError,ModbusPDU14ReadFileRecordError,ModbusPDU15WriteFileRecordError,ModbusPDU16MaskWriteRegisterError,
-               ModbusPDU17ReadWriteMultipleRegistersError,ModbusPDU18ReadFIFOQueueError,ModbusPDU2B0EReadDeviceIdentificationError}
 
 tcpcommunication = False
 
@@ -59,9 +48,6 @@ def custom_display(packet):
         tcpcommunication = False
 
         determine_packet_risk(packet) # Assigns a risk value to the packet currently being processed in the corresponding packet_risk list.
-
-        print str(error_risk)
-        print str(packet.lastlayer())
 
         if 'Error' in last_layer_string(packet):
             f.write("\nBad Modbus packet : "+str(packet_count)+" Risk Level: "+str(packet_risk[packet_count])+"\n"+packet.show2(dump=True))
@@ -97,7 +83,15 @@ def determine_packet_risk(packet):
         Null
     """
 
-    if low_risk in packet:
+    if (packet.haslayer(ModbusPDU01ReadCoilsRequest) or packet.haslayer(ModbusPDU01ReadCoilsResponse)
+        or packet.haslayer(ModbusPDU02ReadDiscreteInputsRequest) or packet.haslayer(ModbusPDU02ReadDiscreteInputsResponse)
+        or packet.haslayer(ModbusPDU03ReadHoldingRegistersRequest) or packet.haslayer(ModbusPDU03ReadHoldingRegistersResponse)
+        or packet.haslayer(ModbusPDU04ReadInputRegistersRequest) or packet.haslayer(ModbusPDU04ReadInputRegistersResponse)
+        or packet.haslayer(ModbusPDU07ReadExceptionStatusRequest) or packet.haslayer(ModbusPDU07ReadExceptionStatusResponse)
+        or packet.haslayer(ModbusPDU11ReportSlaveIdRequest) or packet.haslayer(ModbusPDU11ReportSlaveIdResponse)
+        or packet.haslayer(ModbusPDU14ReadFileRecordRequest) or packet.haslayer(ModbusPDU14ReadFileRecordResponse)
+        or packet.haslayer(ModbusPDU18ReadFIFOQueueRequest) or packet.haslayer(ModbusPDU18ReadFIFOQueueResponse)
+        or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationRequest) or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationResponse)):
         packet_risk[packet_count]=0.25
         print "Low PR"
 
@@ -109,7 +103,14 @@ def determine_packet_risk(packet):
         packet_risk[packet_count]=0.75
         print "High PR"
 
-    if error_risk in packet:
+    if (packet.haslayer(ModbusPDU01ReadCoilsError) or packet.haslayer(ModbusPDU02ReadDiscreteInputsError)
+        or packet.haslayer(ModbusPDU03ReadHoldingRegistersError) or packet.haslayer(ModbusPDU04ReadInputRegistersError)
+        or packet.haslayer(ModbusPDU05WriteSingleCoilError) or packet.haslayer(ModbusPDU06WriteSingleRegisterError)
+        or packet.haslayer(ModbusPDU07ReadExceptionStatusError) or packet.haslayer(ModbusPDU0FWriteMultipleCoilsError)
+        or packet.haslayer(ModbusPDU10WriteMultipleRegistersError) or packet.haslayer(ModbusPDU11ReportSlaveIdError)
+        or packet.haslayer(ModbusPDU14ReadFileRecordError) or packet.haslayer(ModbusPDU15WriteFileRecordError)
+        or packet.haslayer(ModbusPDU16MaskWriteRegisterError) or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersError)
+        or packet.haslayer(ModbusPDU18ReadFIFOQueueError) or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationError)):
         packet_risk[packet_count]=0.95
         print "Error PR"
 
