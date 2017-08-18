@@ -19,13 +19,6 @@ packet_risk = [] #Empty list which will contain risk level of each packet.
 cache=[] #To be utilised
 #To write to PCAP file, use wrpcap("filename.pcap",var_to_write)
 
-med_risk={ModbusPDU15WriteFileRecordRequest,ModbusPDU15WriteFileRecordResponse,ModbusPDU16MaskWriteRegisterRequest,ModbusPDU16MaskWriteRegisterResponse,
-             ModbusReadFileSubRequest,ModbusReadFileSubResponse,ModbusWriteFileSubRequest,ModbusWriteFileSubResponse}
-
-high_risk={ModbusPDU05WriteSingleCoilRequest,ModbusPDU05WriteSingleCoilResponse,ModbusPDU06WriteSingleRegisterRequest,ModbusPDU06WriteSingleRegisterResponse,
-              ModbusPDU0FWriteMultipleCoilsRequest,ModbusPDU0FWriteMultipleCoilsResponse,ModbusPDU10WriteMultipleRegistersRequest,ModbusPDU10WriteMultipleRegistersResponse,
-              ModbusPDU17ReadWriteMultipleRegistersRequest,ModbusPDU17ReadWriteMultipleRegistersResponse}
-
 tcpcommunication = False
 
 f = open('errorpackets.txt', 'a+')
@@ -63,7 +56,7 @@ def custom_display(packet):
                 packet_risk[packet_count]) + " Type: " + last_layer_string(packet)
             packet_count += 1
             return
-
+        packet_count += 1
     # noinspection PyUnreachableCode
     if tcpcommunication:
         return ''
@@ -103,15 +96,22 @@ def determine_packet_risk(packet):
         print packet_risk
         print "Low PR"
 
-    if med_risk in packet:
+    elif (packet.haslayer(ModbusPDU15WriteFileRecordRequest) or packet.haslayer(ModbusPDU15WriteFileRecordResponse)
+        or packet.haslayer(ModbusPDU16MaskWriteRegisterRequest) or packet.haslayer(ModbusPDU16MaskWriteRegisterResponse)
+        or packet.haslayer(ModbusReadFileSubRequest) or packet.haslayer(ModbusReadFileSubResponse)
+        or packet.haslayer(ModbusWriteFileSubRequest) or packet.haslayer(ModbusWriteFileSubResponse)):
         packet_risk.append(0.5)
         print "Med PR"
 
-    if high_risk in packet:
+    elif (packet.haslayer(ModbusPDU05WriteSingleCoilRequest) or packet.haslayer(ModbusPDU05WriteSingleCoilResponse)
+        or packet.haslayer(ModbusPDU06WriteSingleRegisterRequest) or packet.haslayer(ModbusPDU06WriteSingleRegisterResponse)
+        or packet.haslayer(ModbusPDU0FWriteMultipleCoilsRequest) or packet.haslayer(ModbusPDU0FWriteMultipleCoilsResponse)
+        or packet.haslayer(ModbusPDU10WriteMultipleRegistersRequest) or packet.haslayer(ModbusPDU10WriteMultipleRegistersResponse)
+        or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersRequest) or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersResponse)):
         packet_risk.append(0.75)
         print "High PR"
 
-    if (packet.haslayer(ModbusPDU01ReadCoilsError) or packet.haslayer(ModbusPDU02ReadDiscreteInputsError)
+    elif (packet.haslayer(ModbusPDU01ReadCoilsError) or packet.haslayer(ModbusPDU02ReadDiscreteInputsError)
         or packet.haslayer(ModbusPDU03ReadHoldingRegistersError) or packet.haslayer(ModbusPDU04ReadInputRegistersError)
         or packet.haslayer(ModbusPDU05WriteSingleCoilError) or packet.haslayer(ModbusPDU06WriteSingleRegisterError)
         or packet.haslayer(ModbusPDU07ReadExceptionStatusError) or packet.haslayer(ModbusPDU0FWriteMultipleCoilsError)
