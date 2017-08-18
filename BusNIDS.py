@@ -51,12 +51,13 @@ def custom_display(packet):
 
         if 'Error' in last_layer_string(packet):
             f.write("\nBad Modbus packet : "+str(packet_count)+" Risk Level: "+str(packet_risk[packet_count])+"\n"+packet.show2(dump=True))
+            packet_count += 1
             return 'Error Packet reported src {} -> dst {} via PDU {}'.format(packet[IP].src, packet[IP].dst,last_layer_string(packet))
         else:
             # Return that there is a valid modbus message request and the details of the function code.
-            return "Valid ModbusADU packet. Risk Level: "+str(packet_risk[packet_count])+" Type: " + last_layer_string(packet)
+            packet_count += 1
+            return "Valid ModbusADU packet. "+str(packet_count)+" Risk Level: "+str(packet_risk[packet_count])+" Type: " + last_layer_string(packet)
 
-        packet_count += 1
     # noinspection PyUnreachableCode
     if tcpcommunication:
         return ''
