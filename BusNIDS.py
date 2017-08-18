@@ -30,7 +30,6 @@ tcpcommunication = False
 
 f = open('errorpackets.txt', 'a+')
 
-
 def custom_display(packet):
     # TODO: Add statistics for each valid type of packet
 
@@ -46,7 +45,7 @@ def custom_display(packet):
         # return packet[packetCount].show()
 
         tcpcommunication = False
-
+        print packet_count
         determine_packet_risk(packet) # Assigns a risk value to the packet currently being processed in the corresponding packet_risk list.
 
         if 'Error' in last_layer_string(packet):
@@ -94,6 +93,7 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU18ReadFIFOQueueRequest) or packet.haslayer(ModbusPDU18ReadFIFOQueueResponse)
         or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationRequest) or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationResponse)):
         packet_risk.append(0.25)
+        print packet_risk
         print "Low PR"
 
     if med_risk in packet:
@@ -113,6 +113,7 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU16MaskWriteRegisterError) or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersError)
         or packet.haslayer(ModbusPDU18ReadFIFOQueueError) or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationError)):
         packet_risk.append(0.95)
+        print packet_risk
         print "Error PR"
 
 
