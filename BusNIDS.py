@@ -92,15 +92,15 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU14ReadFileRecordRequest) or packet.haslayer(ModbusPDU14ReadFileRecordResponse)
         or packet.haslayer(ModbusPDU18ReadFIFOQueueRequest) or packet.haslayer(ModbusPDU18ReadFIFOQueueResponse)
         or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationRequest) or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationResponse)):
-        packet_risk[packet_count]=0.25
+        packet_risk.append(0.25)
         print "Low PR"
 
     if med_risk in packet:
-        packet_risk[packet_count]=0.5
+        packet_risk.append(0.5)
         print "Med PR"
 
     if high_risk in packet:
-        packet_risk[packet_count]=0.75
+        packet_risk.append(0.75)
         print "High PR"
 
     if (packet.haslayer(ModbusPDU01ReadCoilsError) or packet.haslayer(ModbusPDU02ReadDiscreteInputsError)
@@ -111,7 +111,7 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU14ReadFileRecordError) or packet.haslayer(ModbusPDU15WriteFileRecordError)
         or packet.haslayer(ModbusPDU16MaskWriteRegisterError) or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersError)
         or packet.haslayer(ModbusPDU18ReadFIFOQueueError) or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationError)):
-        packet_risk[packet_count]=0.95
+        packet_risk.append(0.95)
         print "Error PR"
 
 
