@@ -82,7 +82,7 @@ def determine_packet_risk(packet):
     Returns:
         Null
     """
-
+    print "Determining packet risk..."
     if (packet.haslayer(ModbusPDU01ReadCoilsRequest) or packet.haslayer(ModbusPDU01ReadCoilsResponse)
         or packet.haslayer(ModbusPDU02ReadDiscreteInputsRequest) or packet.haslayer(ModbusPDU02ReadDiscreteInputsResponse)
         or packet.haslayer(ModbusPDU03ReadHoldingRegistersRequest) or packet.haslayer(ModbusPDU03ReadHoldingRegistersResponse)
