@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # TODO: Update version number before push
-# v0.0.31
+# v0.0.4
 
 from scapy.all import *
 
@@ -14,10 +14,14 @@ load_contrib('modbus')
 PORT = '502'
 INTERFACE = "wlan0"
 MASTER_IP="192.168.2.2"
+CACHE_MAX_SIZE = 1000
 
 packet_count = 0
+cache_packet_count = packet_count % CACHE_MAX_SIZE
 packet_risk = [] #List to contain risk of each individual packet
 cache = [] #To be utilised
+num_of_caches = 0 #Maintains a count of the number of caches that have been written to
+cache_risk = [] #List to contain risk of each cached sequence of packets
 #Write to PCAP using wrpcap("filename.pcap",var_to_write)
 
 tcp_communication = False
@@ -29,6 +33,7 @@ def custom_display(packet):
 
     global packet_count
     global tcp_communication
+    global num_of_caches
 
     # Checks if there are Modbus ADUs (application data unit) in the packets, they contain the MBAP header, Function Code and Function Data.
     if packet.haslayer(ModbusADURequest) or packet.haslayer(ModbusADUResponse):
@@ -45,18 +50,26 @@ def custom_display(packet):
             f.write("\nBad Modbus packet : "+str(packet_count)+" Risk Level: "+str(packet_risk[packet_count])+"\n"+packet.show2(dump=True))
             print 'Error Packet reported src {} -> dst {} via PDU {}'.format(packet[IP].src, packet[IP].dst,last_layer_string(packet))
             packet_count += 1
-            return
 
         else:
             # Return that there is a valid modbus message request and the details of the function code.
-            print "Valid ModbusADU packet. " + str(packet_count) + " Risk Level: " + str(
-                packet_risk[packet_count]) + " Type: " + last_layer_string(packet)
+            print "Valid ModbusADU packet. " + str(packet_count) + " Risk Level: " + str(packet_risk[packet_count]) + " Type: " + last_layer_string(packet)
             packet_count += 1
-            return
+
+        if len(cache) < CACHE_MAX_SIZE:
+            cache.append(packet)
+            print len(cache)
+        else:
+            print len(cache)
+            print get_cache_risk(cache)
+            del cache[:]
+            num_of_caches += 1
+            cache.append(packet)
+
         packet_count += 1
     # noinspection PyUnreachableCode
     if tcp_communication:
-        return ''
+        return
 
     else:
         tcp_communication = True
@@ -114,8 +127,7 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersRequest) or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersResponse)):
         pr_local += 0.75
         packet_risk.append(pr_local)
-        print
-        "High PR"
+        print "High PR"
 
     elif (packet.haslayer(ModbusPDU01ReadCoilsError) or packet.haslayer(ModbusPDU02ReadDiscreteInputsError)
         or packet.haslayer(ModbusPDU03ReadHoldingRegistersError) or packet.haslayer(ModbusPDU04ReadInputRegistersError)
@@ -130,6 +142,13 @@ def determine_packet_risk(packet):
         print packet_risk
         print "Error PR"
 
+def get_cache_risk(current_cache):
+    """Assigns a risk level to a cache of CACHE_MAX_SIZE packets
+        based on the average risk level in the cache.
+        Returns:
+        Null
+    """
+    return sum(current_cache)/len(current_cache)
 
 ## Configure the sniff scapy argument for port 502 on the Rpi wireless interface and only sniff MAX_PACKETS  packets.
 pkt = sniff(filter="port " + PORT, iface=INTERFACE, prn=custom_display)
