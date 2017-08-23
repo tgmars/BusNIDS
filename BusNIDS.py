@@ -70,7 +70,7 @@ def custom_display(packet):
         else:
             cache_risk.append(get_cache_risk(packet_risk))
             print len(cache)
-            curr_cache_risk=cache_risk(num_of_caches)
+            curr_cache_risk=cache_risk[num_of_caches]
             print "curr_cache_riskh: "+str(curr_cache_risk)
             print "ma risk stddev over: "+str(ma_risk+(ma_risk*sigma))
             if curr_cache_risk>(ma_risk+(ma_risk*sigma)):
