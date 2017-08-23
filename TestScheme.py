@@ -21,8 +21,8 @@ stream = StreamSocket(sock)
 
 #Create various attack packets to send to the destination
 
-read_coils=ModbusADURequest()/ModbusPDU01ReadCoilsRequest(startingAddr=0,quantity=3)
-read_discrete_inputs=ModbusADURequest()/ModbusPDU02ReadDiscreteInputsRequest(startingAddr=2,quantity=1)
+read_coils=ModbusADURequest()/ModbusPDU01ReadCoilsRequest(startAddr=0,quantity=3)
+read_discrete_inputs=ModbusADURequest()/ModbusPDU02ReadDiscreteInputsRequest(startAddr=2,quantity=1)
 errorpacket=ModbusADURequest()/ModbusPDU10WriteMultipleRegistersRequest(startingAddr=1,outputsValue=[13],quantityRegisters=5L)
 for i in range(0,80):
     stream.sr(read_coils)
