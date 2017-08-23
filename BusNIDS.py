@@ -71,12 +71,13 @@ def custom_display(packet):
             cache_risk.append(get_cache_risk(packet_risk))
             print len(cache)
             curr_cache_risk=cache_risk[num_of_caches]
-            print "curr_cache_riskh: "+str(curr_cache_risk)
+            print "curr_cache_risk: "+str(curr_cache_risk)
             print "ma risk stddev over: "+str(ma_risk+(ma_risk*sigma))
             if curr_cache_risk>(ma_risk+(ma_risk*sigma)):
                 print "Suspected Attack"
             ma_risk=sum(cache_risk)/len(cache_risk)
             del cache[:]
+            del packet_risk[:]
             num_of_caches += 1
             cache.append(packet)
 
