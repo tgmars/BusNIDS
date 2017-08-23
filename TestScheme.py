@@ -24,7 +24,7 @@ stream = StreamSocket(sock)
 read_coils=ModbusADURequest()/ModbusPDU01ReadCoilsRequest(startAddr=0,quantity=3)
 read_discrete_inputs=ModbusADURequest()/ModbusPDU02ReadDiscreteInputsRequest(startAddr=2,quantity=1)
 errorpacket=ModbusADURequest()/ModbusPDU10WriteMultipleRegistersRequest(startingAddr=1,outputsValue=[13],quantityRegisters=5L)
-for i in range(0,80):
+for i in range(0,99):
     stream.sr(read_coils)
     stream.sr(read_discrete_inputs)
     time.sleep(0.5)

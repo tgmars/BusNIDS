@@ -22,7 +22,7 @@ packet_risk = [] #List to contain risk of each individual packet
 cache = [] #To be utilised
 num_of_caches = 0 #Maintains a count of the number of caches that have been written to
 cache_risk = [] #List to contain risk of each cached sequence of packets
-ma_risk = 0.3
+ma_risk = 0.25
 sigma = 0.341
 
 #Write to PCAP using wrpcap("filename.pcap",var_to_write)
@@ -38,8 +38,6 @@ def custom_display(packet):
     global tcp_communication
     global num_of_caches
     global ma_risk
-
-    pr_local=0
 
     # Checks if there are Modbus ADUs (application data unit) in the packets, they contain the MBAP header, Function Code and Function Data.
     if packet.haslayer(ModbusADURequest) or packet.haslayer(ModbusADUResponse):
@@ -69,6 +67,7 @@ def custom_display(packet):
             print "risk length: "+str(len(packet_risk))
         else:
             cache_risk.append(get_cache_risk(packet_risk))
+
             print len(cache)
             curr_cache_risk=cache_risk[num_of_caches]
             print "curr_cache_risk: "+str(curr_cache_risk)
@@ -80,6 +79,7 @@ def custom_display(packet):
             del packet_risk[:]
             num_of_caches += 1
             cache.append(packet)
+            packet_risk.append(pr_local)
 
     # noinspection PyUnreachableCode
     if tcp_communication:
