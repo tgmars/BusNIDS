@@ -14,7 +14,7 @@ load_contrib('modbus')
 PORT = '502'
 INTERFACE = "wlan0"
 MASTER_IP="192.168.2.2"
-CACHE_MAX_SIZE = 1000
+CACHE_MAX_SIZE = 100
 
 packet_count = 0
 cache_packet_count = packet_count % CACHE_MAX_SIZE
@@ -117,7 +117,6 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationRequest) or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationResponse)):
         pr_local+=0.25
         packet_risk.append(pr_local)
-        print packet_risk
         print "Low PR"
 
     elif (packet.haslayer(ModbusPDU15WriteFileRecordRequest) or packet.haslayer(ModbusPDU15WriteFileRecordResponse)
@@ -147,7 +146,6 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU18ReadFIFOQueueError) or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationError)):
         pr_local += 0.95
         packet_risk.append(pr_local)
-        print packet_risk
         print "Error PR"
 
 def get_cache_risk(current_cache):
