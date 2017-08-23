@@ -14,7 +14,7 @@ load_contrib('modbus')
 PORT = '502'
 INTERFACE = "wlan0"
 MASTER_IP="192.168.2.2"
-CACHE_MAX_SIZE = 100
+CACHE_MAX_SIZE = 50
 
 packet_count = 0
 cache_packet_count = packet_count % CACHE_MAX_SIZE
@@ -39,6 +39,8 @@ def custom_display(packet):
     global num_of_caches
     global ma_risk
 
+    pr_local=0
+
     # Checks if there are Modbus ADUs (application data unit) in the packets, they contain the MBAP header, Function Code and Function Data.
     if packet.haslayer(ModbusADURequest) or packet.haslayer(ModbusADUResponse):
         # Used to generate a visualisation of the sniffed packet as a .pdf
@@ -48,27 +50,30 @@ def custom_display(packet):
         # return packet[packetCount].show()
 
         tcp_communication = False
-        determine_packet_risk(packet) # Assigns a risk value to the packet currently being processed in the corresponding packet_risk list.
+        pr_local=determine_packet_risk(packet) # Assigns a risk value to the packet currently being processed in the corresponding packet_risk list.
 
         if 'Error' in last_layer_string(packet):
-            f.write("\nBad Modbus packet : "+str(packet_count)+" Risk Level: "+str(packet_risk[packet_count])+"\n"+packet.show2(dump=True))
+            f.write("\nBad Modbus packet : "+str(packet_count)+" Risk Level: "+str(pr_local)+"\n"+packet.show2(dump=True))
             print 'Error Packet reported src {} -> dst {} via PDU {}'.format(packet[IP].src, packet[IP].dst,last_layer_string(packet))
             packet_count += 1
 
         else:
             # Return that there is a valid modbus message request and the details of the function code.
-            print "Valid ModbusADU packet. " + str(packet_count) + " Risk Level: " + str(packet_risk[packet_count]) + " Type: " + last_layer_string(packet)
+            print "Valid ModbusADU packet. " + str(packet_count) + " Risk Level: " + str(pr_local) + " Type: " + last_layer_string(packet)
             packet_count += 1
 
         if len(cache) < CACHE_MAX_SIZE:
             cache.append(packet)
-            print len(cache)
+            packet_risk.append(pr_local)
+            print "cache length: "+str(len(cache))
+            print "risk length: "+str(len(packet_risk))
         else:
-            cur_risk=get_cache_risk(cache)
+            cache_risk.append(get_cache_risk(packet_risk))
             print len(cache)
-            print cur_risk
-            cache_risk.append(cur_risk)
-            if cur_risk>(ma_risk+(ma_risk*sigma)):
+            curr_cache_risk=cache_risk(num_of_caches)
+            print "curr_cache_riskh: "+str(curr_cache_risk)
+            print "ma risk stddev over: "+str(ma_risk+(ma_risk*sigma))
+            if curr_cache_risk>(ma_risk+(ma_risk*sigma)):
                 print "Suspected Attack"
             ma_risk=sum(cache_risk)/len(cache_risk)
             del cache[:]
@@ -116,16 +121,17 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU18ReadFIFOQueueRequest) or packet.haslayer(ModbusPDU18ReadFIFOQueueResponse)
         or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationRequest) or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationResponse)):
         pr_local+=0.25
-        packet_risk.append(pr_local)
         print "Low PR"
+        return pr_local
+
 
     elif (packet.haslayer(ModbusPDU15WriteFileRecordRequest) or packet.haslayer(ModbusPDU15WriteFileRecordResponse)
         or packet.haslayer(ModbusPDU16MaskWriteRegisterRequest) or packet.haslayer(ModbusPDU16MaskWriteRegisterResponse)
         or packet.haslayer(ModbusReadFileSubRequest) or packet.haslayer(ModbusReadFileSubResponse)
         or packet.haslayer(ModbusWriteFileSubRequest) or packet.haslayer(ModbusWriteFileSubResponse)):
         pr_local += 0.5
-        packet_risk.append(pr_local)
         print "Med PR"
+        return pr_local
 
     elif (packet.haslayer(ModbusPDU05WriteSingleCoilRequest) or packet.haslayer(ModbusPDU05WriteSingleCoilResponse)
         or packet.haslayer(ModbusPDU06WriteSingleRegisterRequest) or packet.haslayer(ModbusPDU06WriteSingleRegisterResponse)
@@ -133,8 +139,8 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU10WriteMultipleRegistersRequest) or packet.haslayer(ModbusPDU10WriteMultipleRegistersResponse)
         or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersRequest) or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersResponse)):
         pr_local += 0.75
-        packet_risk.append(pr_local)
         print "High PR"
+        return pr_local
 
     elif (packet.haslayer(ModbusPDU01ReadCoilsError) or packet.haslayer(ModbusPDU02ReadDiscreteInputsError)
         or packet.haslayer(ModbusPDU03ReadHoldingRegistersError) or packet.haslayer(ModbusPDU04ReadInputRegistersError)
@@ -145,16 +151,16 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU16MaskWriteRegisterError) or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersError)
         or packet.haslayer(ModbusPDU18ReadFIFOQueueError) or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationError)):
         pr_local += 0.95
-        packet_risk.append(pr_local)
         print "Error PR"
+        return pr_local
 
-def get_cache_risk(current_cache):
+def get_cache_risk(cache_of_packet_risks):
     """Assigns a risk level to a cache of CACHE_MAX_SIZE packets
         based on the average risk level in the cache.
         Returns:
         Null
     """
-    return sum(current_cache)/len(current_cache)
+    return sum(cache_of_packet_risks)/len(cache_of_packet_risks)
 
 ## Configure the sniff scapy argument for port 502 on the Rpi wireless interface and only sniff MAX_PACKETS  packets.
 pkt = sniff(filter="port " + PORT, iface=INTERFACE, prn=custom_display)
