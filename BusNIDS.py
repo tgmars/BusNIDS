@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # TODO: Update version number before push
-# v0.0.4
+# v0.0.41
 
 from scapy.all import *
 
@@ -22,6 +22,9 @@ packet_risk = [] #List to contain risk of each individual packet
 cache = [] #To be utilised
 num_of_caches = 0 #Maintains a count of the number of caches that have been written to
 cache_risk = [] #List to contain risk of each cached sequence of packets
+ma_risk = 0.3
+sigma = 0.341
+
 #Write to PCAP using wrpcap("filename.pcap",var_to_write)
 
 tcp_communication = False
@@ -34,6 +37,7 @@ def custom_display(packet):
     global packet_count
     global tcp_communication
     global num_of_caches
+    global ma_risk
 
     # Checks if there are Modbus ADUs (application data unit) in the packets, they contain the MBAP header, Function Code and Function Data.
     if packet.haslayer(ModbusADURequest) or packet.haslayer(ModbusADUResponse):
@@ -60,8 +64,13 @@ def custom_display(packet):
             cache.append(packet)
             print len(cache)
         else:
+            cur_risk=get_cache_risk(cache)
             print len(cache)
-            print get_cache_risk(cache)
+            print cur_risk
+            cache_risk.append(cur_risk)
+            if cur_risk>(ma_risk+(ma_risk*sigma):
+                print "Suspected Attack"
+            ma_risk=sum(cache_risk)/len(cache_risk)
             del cache[:]
             num_of_caches += 1
             cache.append(packet)
