@@ -68,7 +68,7 @@ def custom_display(packet):
             print len(cache)
             print cur_risk
             cache_risk.append(cur_risk)
-            if cur_risk>(ma_risk+(ma_risk*sigma):
+            if cur_risk>(ma_risk+(ma_risk*sigma)):
                 print "Suspected Attack"
             ma_risk=sum(cache_risk)/len(cache_risk)
             del cache[:]
