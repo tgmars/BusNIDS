@@ -75,7 +75,6 @@ def custom_display(packet):
             num_of_caches += 1
             cache.append(packet)
 
-        packet_count += 1
     # noinspection PyUnreachableCode
     if tcp_communication:
         return
