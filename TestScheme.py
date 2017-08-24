@@ -8,6 +8,8 @@ import time
 
 load_contrib('modbus')
 
+NUM_PACKETS_TO_SNIFF=100
+
 #Parse arguments from command line at runtime
 parser = argparse.ArgumentParser(description="Sends a variety of valid and invalid Modbus TCP packets from an 'attacker' to a user-defined IP address to test robustness of a PLC or IDS.")
 parser.add_argument("dst_ip", help="IP address of Modbus PLC or IDS to test.")
@@ -24,7 +26,7 @@ stream = StreamSocket(sock)
 read_coils=ModbusADURequest()/ModbusPDU01ReadCoilsRequest(startAddr=0,quantity=3)
 read_discrete_inputs=ModbusADURequest()/ModbusPDU02ReadDiscreteInputsRequest(startAddr=2,quantity=1)
 errorpacket=ModbusADURequest()/ModbusPDU10WriteMultipleRegistersRequest(startingAddr=1,outputsValue=[13],quantityRegisters=5L)
-for i in range(0,99):
+for i in range(0,(NUM_PACKETS_TO_SNIFF/4)-1):
     stream.sr(read_coils)
     stream.sr(read_discrete_inputs)
     time.sleep(0.5)
