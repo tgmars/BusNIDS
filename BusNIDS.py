@@ -14,7 +14,11 @@ load_contrib('modbus')
 PORT = '502'
 INTERFACE = "wlan0"
 MASTER_IP="192.168.2.2"
-CACHE_MAX_SIZE = 50
+CACHE_MAX_SIZE = 40
+LOW_RISK=0.25
+MED_RISK=0.5
+HIGH_RISK=0.9
+ERROR_RISK=1.5
 
 packet_count = 0
 cache_packet_count = packet_count % CACHE_MAX_SIZE
@@ -121,7 +125,7 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU14ReadFileRecordRequest) or packet.haslayer(ModbusPDU14ReadFileRecordResponse)
         or packet.haslayer(ModbusPDU18ReadFIFOQueueRequest) or packet.haslayer(ModbusPDU18ReadFIFOQueueResponse)
         or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationRequest) or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationResponse)):
-        pr_local+=0.25
+        pr_local+=LOW_RISK
         print "Low PR"
         return pr_local
 
@@ -130,7 +134,7 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU16MaskWriteRegisterRequest) or packet.haslayer(ModbusPDU16MaskWriteRegisterResponse)
         or packet.haslayer(ModbusReadFileSubRequest) or packet.haslayer(ModbusReadFileSubResponse)
         or packet.haslayer(ModbusWriteFileSubRequest) or packet.haslayer(ModbusWriteFileSubResponse)):
-        pr_local += 0.5
+        pr_local += MED_RISK
         print "Med PR"
         return pr_local
 
@@ -139,7 +143,7 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU0FWriteMultipleCoilsRequest) or packet.haslayer(ModbusPDU0FWriteMultipleCoilsResponse)
         or packet.haslayer(ModbusPDU10WriteMultipleRegistersRequest) or packet.haslayer(ModbusPDU10WriteMultipleRegistersResponse)
         or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersRequest) or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersResponse)):
-        pr_local += 0.75
+        pr_local += HIGH_RISK
         print "High PR"
         return pr_local
 
@@ -151,7 +155,7 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU14ReadFileRecordError) or packet.haslayer(ModbusPDU15WriteFileRecordError)
         or packet.haslayer(ModbusPDU16MaskWriteRegisterError) or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersError)
         or packet.haslayer(ModbusPDU18ReadFIFOQueueError) or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationError)):
-        pr_local += 0.95
+        pr_local += ERROR_RISK
         print "Error PR"
         return pr_local
 
@@ -159,7 +163,7 @@ def get_cache_risk(cache_of_packet_risks):
     """Assigns a risk level to a cache of CACHE_MAX_SIZE packets
         based on the average risk level in the cache.
         Returns:
-        Null
+        Average value of a number CACHE_MAX_SIZR packet risk
     """
     return sum(cache_of_packet_risks)/len(cache_of_packet_risks)
 
