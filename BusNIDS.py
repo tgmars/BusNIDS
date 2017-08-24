@@ -148,7 +148,7 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU10WriteMultipleRegistersRequest) or packet.haslayer(ModbusPDU10WriteMultipleRegistersResponse)
         or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersRequest) or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersResponse)):
         pr_local += HIGH_RISK
-        print "High PR"
+        print "High PR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         return pr_local
 
     elif (packet.haslayer(ModbusPDU01ReadCoilsError) or packet.haslayer(ModbusPDU02ReadDiscreteInputsError)
@@ -160,7 +160,7 @@ def determine_packet_risk(packet):
         or packet.haslayer(ModbusPDU16MaskWriteRegisterError) or packet.haslayer(ModbusPDU17ReadWriteMultipleRegistersError)
         or packet.haslayer(ModbusPDU18ReadFIFOQueueError) or packet.haslayer(ModbusPDU2B0EReadDeviceIdentificationError)):
         pr_local += ERROR_RISK
-        print "Error PR"
+        print "Error PR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         return pr_local
 
 def get_cache_risk(cache_of_packet_risks):

