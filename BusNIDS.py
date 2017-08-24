@@ -14,8 +14,8 @@ load_contrib('modbus')
 PORT = '502'
 INTERFACE = "wlan0"
 MASTER_IP="192.168.2.2"
-CACHE_MAX_SIZE = 40
-LOW_RISK=0.25
+CACHE_MAX_SIZE = 50
+LOW_RISK=0.1
 MED_RISK=0.5
 HIGH_RISK=0.9
 ERROR_RISK=1.5
@@ -26,8 +26,9 @@ packet_risk = [] #List to contain risk of each individual packet
 cache = [] #To be utilised
 num_of_caches = 0 #Maintains a count of the number of caches that have been written to
 cache_risk = [] #List to contain risk of each cached sequence of packets
-ma_risk = 0.25
+ma_risk = 0.1
 sigma = 0.341
+num_detections=0
 
 #Write to PCAP using wrpcap("filename.pcap",var_to_write)
 
@@ -42,6 +43,7 @@ def custom_display(packet):
     global tcp_communication
     global num_of_caches
     global ma_risk
+    global num_detections
 
     # Checks if there are Modbus ADUs (application data unit) in the packets, they contain the MBAP header, Function Code and Function Data.
     if packet.haslayer(ModbusADURequest) or packet.haslayer(ModbusADUResponse):
@@ -77,7 +79,9 @@ def custom_display(packet):
             print "curr_cache_risk: "+str(curr_cache_risk)
             print "ma risk stddev over: "+str(ma_risk+(ma_risk*sigma))
             if curr_cache_risk>(ma_risk+(ma_risk*sigma)):
+                num_detections += 1
                 print "Suspected Attack"
+            print "Number of detections: "+str(num_detections)
             ma_risk=sum(cache_risk)/len(cache_risk)
             del cache[:]
             del packet_risk[:]
