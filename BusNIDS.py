@@ -14,11 +14,11 @@ load_contrib('modbus')
 PORT = '502'
 INTERFACE = "wlan0"
 MASTER_IP="192.168.2.2"
-CACHE_MAX_SIZE = 50
+CACHE_MAX_SIZE = 100
 LOW_RISK=0.1
 MED_RISK=0.5
 HIGH_RISK=0.9
-ERROR_RISK=1.5
+ERROR_RISK=2
 
 packet_count = 0
 cache_packet_count = packet_count % CACHE_MAX_SIZE
