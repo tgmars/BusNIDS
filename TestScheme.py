@@ -36,8 +36,8 @@ write_coil_low=ModbusADURequest()/ModbusPDU05WriteSingleCoilRequest(outputAddr=2
 write_coil_high=ModbusADURequest()/ModbusPDU05WriteSingleCoilRequest(outputAddr=2,outputValue=1)
 
 #Write to button
-write_register_high=ModbusADURequest()/ModbusPDU06WriteSingleRegisterRequest(outputAddr=2,ouputValue=1)
-write_register_low=ModbusADURequest()/ModbusPDU06WriteSingleRegisterRequest(outputAddr=2,ouputValue=0)
+write_register_high=ModbusADURequest()/ModbusPDU06WriteSingleRegisterRequest(outputAddr=2,outputValue=1)
+write_register_low=ModbusADURequest()/ModbusPDU06WriteSingleRegisterRequest(outputAddr=2,outputValue=0)
 
 
 write_multiple_coils_low=ModbusADURequest()/ModbusPDU0FWriteMultipleCoilsRequest(outputsValue=[0],startingAddr=2,quantityOutput=1)
