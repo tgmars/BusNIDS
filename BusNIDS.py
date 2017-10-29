@@ -113,7 +113,7 @@ def determine_packet_risk(packet):
     I apologise to anyone that reads this code.
 
     Returns:
-        Null
+        Packet risk of an individual packet according to pre-defined risk metrics
     """
     # TODO: Add modifier to pr_local if IP source on incoming or IP dst on outgoing is different to MASTER_IP
 
@@ -132,7 +132,6 @@ def determine_packet_risk(packet):
         pr_local+=LOW_RISK
         print "Low PR"
         return pr_local
-
 
     elif (packet.haslayer(ModbusPDU15WriteFileRecordRequest) or packet.haslayer(ModbusPDU15WriteFileRecordResponse)
         or packet.haslayer(ModbusPDU16MaskWriteRegisterRequest) or packet.haslayer(ModbusPDU16MaskWriteRegisterResponse)
@@ -167,7 +166,7 @@ def get_cache_risk(cache_of_packet_risks):
     """Assigns a risk level to a cache of CACHE_MAX_SIZE packets
         based on the average risk level in the cache.
         Returns:
-        Average value of a number CACHE_MAX_SIZR packet risk
+        Average value of a number CACHE_MAX_SIZE packet risk
     """
     return sum(cache_of_packet_risks)/len(cache_of_packet_risks)
 

